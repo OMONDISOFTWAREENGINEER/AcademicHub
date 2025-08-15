@@ -1,40 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser, loginUser, clearError } from '../store/authSlice';
 
 const AuthModal = ({ onClose, onLogin }) => {
+  const dispatch = useDispatch();
+  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
+  
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'user'
   });
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      toast.success(`Welcome ${user.name}! ${isLogin ? 'Logged in' : 'Account created'} successfully.`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      onLogin(user);
+    }
+  }, [isAuthenticated, user, isLogin, onLogin]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate authentication
-    const isAdmin = formData.email === 'admin@academicprohub.com';
-    const userData = {
-      id: 1,
-      name: formData.name || formData.email.split('@')[0],
-      email: formData.email,
-      role: isAdmin ? 'admin' : 'client'
-    };
     
-    // Show success notification
-    toast.success(`Welcome ${userData.name}! ${isLogin ? 'Logged in' : 'Account created'} successfully.`, {
-      position: "top-right",
-      autoClose: 3000,
-    });
-    
-    onLogin(userData);
+    if (isLogin) {
+      dispatch(loginUser({
+        email: formData.email,
+        password: formData.password
+      }));
+    } else {
+      dispatch(registerUser({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role
+      }));
+    }
   };
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handleRoleChange = (e) => {
+    setFormData({
+      ...formData,
+      role: e.target.value
     });
   };
 
@@ -56,23 +87,40 @@ const AuthModal = ({ onClose, onLogin }) => {
         <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-lato"
-                    placeholder="Enter your full name"
-                    required={!isLogin}
-                  />
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-lato"
+                      placeholder="Enter your full name"
+                      required={!isLogin}
+                    />
+                  </div>
                 </div>
-              </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Role
+                  </label>
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleRoleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-lato"
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </>
             )}
 
             <div>
@@ -120,9 +168,10 @@ const AuthModal = ({ onClose, onLogin }) => {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium font-poppins"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium font-poppins disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
             </button>
           </form>
 
@@ -130,7 +179,10 @@ const AuthModal = ({ onClose, onLogin }) => {
             <p className="text-gray-600 font-lato">
               {isLogin ? "Don't have an account?" : "Already have an account?"}
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setFormData({ name: '', email: '', password: '', role: 'user' });
+                }}
                 className="text-blue-600 hover:text-blue-700 font-medium ml-1"
               >
                 {isLogin ? 'Sign up' : 'Sign in'}
