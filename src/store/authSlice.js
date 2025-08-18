@@ -2,6 +2,24 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
+// Safely read and parse persisted auth state from localStorage
+const getStoredUser = () => {
+  const raw = localStorage.getItem('user');
+  if (!raw || raw === 'undefined' || raw === 'null') return null;
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    localStorage.removeItem('user');
+    return null;
+  }
+};
+
+const getStoredToken = () => {
+  const token = localStorage.getItem('token');
+  if (!token || token === 'undefined' || token === 'null') return null;
+  return token;
+};
+
 // Async thunks
 export const registerUser = createAsyncThunk(
   'auth/register',
@@ -15,10 +33,17 @@ export const registerUser = createAsyncThunk(
         body: JSON.stringify(userData),
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        return rejectWithValue(text || 'Registration failed');
+      }
 
       if (!response.ok) {
-        return rejectWithValue(data.message || 'Registration failed');
+        return rejectWithValue(data?.message || 'Registration failed');
       }
 
       // Store token in localStorage
@@ -44,10 +69,17 @@ export const loginUser = createAsyncThunk(
         body: JSON.stringify(credentials),
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        return rejectWithValue(text || 'Login failed');
+      }
 
       if (!response.ok) {
-        return rejectWithValue(data.message || 'Login failed');
+        return rejectWithValue(data?.message || 'Login failed');
       }
 
       // Store token in localStorage
@@ -77,10 +109,17 @@ export const getProfile = createAsyncThunk(
         },
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        return rejectWithValue(text || 'Failed to get profile');
+      }
 
       if (!response.ok) {
-        return rejectWithValue(data.message || 'Failed to get profile');
+        return rejectWithValue(data?.message || 'Failed to get profile');
       }
 
       return data;
@@ -99,10 +138,13 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+const storedUser = getStoredUser();
+const storedToken = getStoredToken();
+
 const initialState = {
-  user: JSON.parse(localStorage.getItem('user')) || null,
-  token: localStorage.getItem('token') || null,
-  isAuthenticated: !!localStorage.getItem('token'),
+  user: storedUser,
+  token: storedToken,
+  isAuthenticated: !!storedToken,
   loading: false,
   error: null,
 };

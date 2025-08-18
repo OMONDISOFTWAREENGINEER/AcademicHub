@@ -14,6 +14,10 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['lucide-react', 'react-toastify'],
+    force: true,
+    include: ['react', 'react-dom', 'react-redux', 'lucide-react', 'react-toastify'],
+  },
+  resolve: {
+    dedupe: ['react', 'react-dom'],
   },
 });

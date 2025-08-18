@@ -7,7 +7,10 @@ const connectDB = async () => {
     // Check if it's a local or Atlas connection
     const isAtlas = mongoURI.includes('mongodb.net') || mongoURI.includes('mongodb+srv');
     
+    mongoose.set('bufferCommands', false);
+
     const options = {
+      serverSelectionTimeoutMS: 10000,
       // For local MongoDB - no special options needed
       ...(isAtlas ? {
         // For MongoDB Atlas
@@ -29,6 +32,7 @@ const connectDB = async () => {
       console.log('3. Try using mongodb+srv:// instead of mongodb:// for Atlas');
     }
     
+    // Fail fast so requests don't hang and later throw 500s due to buffering
     process.exit(1);
   }
 };

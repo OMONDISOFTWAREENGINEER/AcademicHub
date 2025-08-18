@@ -62,7 +62,15 @@ router.post('/register', [
       }
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Registration error:', error?.message || error);
+    // Duplicate email error
+    if (error && (error.code === 11000 || error.code === '11000')) {
+      return res.status(400).json({ message: 'User already exists with this email' });
+    }
+    // Validation error from mongoose
+    if (error && error.name === 'ValidationError') {
+      return res.status(400).json({ message: Object.values(error.errors)[0]?.message || 'Validation error' });
+    }
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -113,7 +121,7 @@ router.post('/login', [
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error:', error?.message || error);
     res.status(500).json({ message: 'Server error' });
   }
 });
