@@ -25,6 +25,7 @@ export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
     try {
+      console.log('[registerUser] payload:', userData);
       const response = await fetch(`${API_BASE}/api/auth/register`, {
         method: 'POST',
         headers: {
@@ -52,6 +53,7 @@ export const registerUser = createAsyncThunk(
 
       return data;
     } catch (error) {
+      console.error('[registerUser] error:', error);
       return rejectWithValue('Network error');
     }
   }
@@ -61,6 +63,7 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
+      console.log('[loginUser] payload:', credentials);
       const response = await fetch(`${API_BASE}/api/auth/login`, {
         method: 'POST',
         headers: {
@@ -88,6 +91,7 @@ export const loginUser = createAsyncThunk(
 
       return data;
     } catch (error) {
+      console.error('[loginUser] error:', error);
       return rejectWithValue('Network error');
     }
   }

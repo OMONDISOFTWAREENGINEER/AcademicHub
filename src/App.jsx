@@ -7,6 +7,8 @@ import Services from './components/Services';
 import Stats from './components/Stats';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
+import WhyChooseUs from './components/WhyChooseUs';
+import ProcessSteps from './components/ProcessSteps';
 import AuthModal from './components/AuthModal';
 import Dashboard from './components/Dashboard';
 import LiveChat from './components/LiveChat';
@@ -101,6 +103,8 @@ function App() {
             />
             <Hero onGetStarted={() => user ? setCurrentPage('dashboard') : setIsAuthOpen(true)} />
             <Services />
+            <WhyChooseUs />
+            <ProcessSteps />
             <Stats />
             <FAQ />
             <Footer />

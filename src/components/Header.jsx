@@ -13,7 +13,10 @@ const Header = ({ onAuthClick, user, onLogout, onNavigate, currentPage }) => {
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
               <GraduationCap className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900 font-poppins">AcademicPro Hub</span>
+            <div>
+              <span className="text-xl font-bold text-gray-900 font-poppins">AcademicPro Hub</span>
+              <div className="text-xs text-blue-600 font-medium -mt-1">No AI, just real writers</div>
+            </div>
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">

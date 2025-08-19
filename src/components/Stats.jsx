@@ -5,7 +5,7 @@ const Stats = () => {
   const stats = [
     {
       icon: Users,
-      number: '600+',
+      number: '1000+',
       label: 'Happy Clients',
       description: 'Satisfied customers worldwide'
     },
@@ -45,28 +45,34 @@ const Stats = () => {
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             return (
-              <div 
+              <div
                 key={index}
                 className="text-center group hover:transform hover:scale-105 transition-all duration-300"
               >
                 <div className="bg-white bg-opacity-20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-opacity-30 transition-all">
                   <IconComponent className="h-10 w-10 text-white" />
                 </div>
-                
+
                 <div className="text-4xl md:text-5xl font-bold text-white mb-2 font-poppins">
                   {stat.number}
                 </div>
-                
+
                 <div className="text-xl font-semibold text-blue-100 mb-2 font-poppins">
                   {stat.label}
                 </div>
-                
+
                 <div className="text-blue-200 font-lato">
                   {stat.description}
                 </div>
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center space-x-2 bg-white bg-opacity-20 text-white px-6 py-3 rounded-full text-sm font-medium">
+            <span>✨ No AI • Real Human Writers • 8+ Years Experience</span>
+          </div>
         </div>
       </div>
     </section>
