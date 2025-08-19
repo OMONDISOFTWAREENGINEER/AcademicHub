@@ -130,7 +130,7 @@ const Hero = ({ onGetStarted }) => {
                 <div className="text-sm opacity-90">Client Rating</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold font-poppins">600+</div>
+                <div className="text-2xl font-bold font-poppins">1000+</div>
                 <div className="text-sm opacity-90">Happy Clients</div>
               </div>
             </div>
