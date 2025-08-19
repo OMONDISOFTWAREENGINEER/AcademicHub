@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Code, BookOpen, Briefcase, Lightbulb, Database } from 'lucide-react';
+import { FileText, Code, BookOpen, Briefcase, Lightbulb, Database, CheckCircle } from 'lucide-react';
 
 const Services = () => {
   const services = [
@@ -84,6 +84,13 @@ const Services = () => {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
+            <CheckCircle className="h-4 w-4" />
+            <span>No AI • Real Writers • Plagiarism-Free Guarantee</span>
+          </div>
         </div>
       </div>
     </section>
